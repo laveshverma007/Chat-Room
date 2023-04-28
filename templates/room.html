@@ -1,11 +1,19 @@
 {% extends 'base.html' %} {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="bg-gray-200">
   <div class="flex-wrap w-full">
-    <div class="m-14 mb-4 overflow-y-auto xl:h-[600px] h-[1400px] w-auto bg-white rounded-lg">
-      <div class="text-5xl p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2">Chat Room: {{code}}</div>
+    <div class="m-14 mb-4 w-auto bg-white rounded-lg" id="Window">
+      <div
+        class="text-5xl p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2"
+      >
+        Chat Room: {{code}}
+      </div>
       <!-- <div class="messages" id="user"></div> -->
-      <div class="messages mt-24" id="messages"></div>
+      <div
+        class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto"
+        id="messages"
+      ></div>
     </div>
     <div class="flex gap-x-2 w-full px-14">
       <input
@@ -16,26 +24,40 @@
         name="message"
         id="message"
       />
-      <button class="bg-slate-700 text-white rounded-2xl px-3 py-1" type="button" name="send" id="send-btn" onClick="sendMessage()">
+      <button
+        class="bg-slate-700 text-white rounded-2xl px-3 py-1"
+        type="button"
+        name="send"
+        id="send-btn"
+        onClick="sendMessage()"
+      >
         Send
       </button>
     </div>
   </div>
   <script>
-    document.getElementById("message").addEventListener("keypress",function(event){
-      if(event.key == "Enter"){
-        // event.preventDefault();
-        document.getElementById('send-btn').click();
-      }
-    }) 
+    document
+      .getElementById("message")
+      .addEventListener("keypress", function (event) {
+        if (event.key == "Enter") {
+          // event.preventDefault();
+          document.getElementById("send-btn").click();
+        }
+      });
   </script>
   <script type="text/javascript">
     var socketio = io();
-  
+
     const messages = document.getElementById("messages");
-  
+
+    let container = document.getElementById("messages");
+
+    function scrollToBottom() {
+      container.scrollTop = container.scrollHeight;
+    }
+
     const createMessage = (name, msg) => {
-      const ddate = new Date().toLocaleString()
+      const ddate = new Date().toLocaleString();
       var content = `
       <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
           <span class="ml-2">
@@ -47,8 +69,8 @@
           </span>
       </div>
       `;
-      if(msg.search("has entered the room") != -1){
-        const ddates = new Date().toLocaleString()
+      if (msg.search("has entered the room") != -1) {
+        const ddates = new Date().toLocaleString();
         content = `
       <div class="text w-fit mx-auto rounded-xl my-4 py-4 bg-green-200">
           <span class="ml-2">
@@ -60,8 +82,8 @@
       </div>
       `;
       }
-      if(msg.search("has left the room") != -1){
-        const ddates = new Date().toLocaleString()
+      if (msg.search("has left the room") != -1) {
+        const ddates = new Date().toLocaleString();
         content = `
       <div class="text w-fit mx-auto rounded-xl my-4 py-4 bg-red-200">
           <span class="ml-2">
@@ -74,12 +96,14 @@
       `;
       }
       messages.innerHTML += content;
+
+      scrollToBottom();
     };
-  
+
     socketio.on("message", (data) => {
       createMessage(data.name, data.message);
     });
-  
+
     const sendMessage = () => {
       const message = document.getElementById("message");
       if (message.value == "") return;
