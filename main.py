@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import join_room, leave_room, send, SocketIO
 import random
+from langdetect import detect
 from string import ascii_uppercase
+from translate import Translator
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "hjhjsdahhds"
@@ -53,13 +55,24 @@ def home():
     return render_template("home.html")
 
 
-@app.route("/room")
+language = {"tolang": "en", "flang": "en"}
+
+
+@app.route("/room", methods=["POST", "GET"])
 def room():
+    if request.method == "POST":
+        data = request.get_json()
+        # print(data.get("toLang"))
+        language["tolang"] = data.get("toLang")
+        # print(request.form.get("inputlang"))
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
         return redirect(url_for("home"))
 
     return render_template("room.html", code=room, messages=rooms[room]["messages"])
+
+
+print(language["tolang"])
 
 
 @socketio.on("message")
@@ -68,9 +81,15 @@ def message(data):
     if room not in rooms:
         return
 
+    lang = detect(data["data"])
+    # print(lang)
+    translator = Translator(from_lang=lang, to_lang=language["tolang"])
+    # output = translator.translate(t_sentence, dest=language)
+    output = translator.translate(data["data"])
+
     content = {
         "name": session.get("name"),
-        "message": data["data"]
+        "message": output
     }
     send(content, to=room)
     rooms[room]["messages"].append(content)

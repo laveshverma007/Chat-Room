@@ -1,38 +1,53 @@
 {% extends 'base.html' %} {% block content %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+
 <body class="bg-gray-200">
   <div class="flex-wrap w-full">
     <div class="m-14 mb-4 w-auto bg-white rounded-lg" id="Window">
-      <div
-        class="text-5xl p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2"
-      >
+      <div class="text-5xl p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2">
         Chat Room: {{code}}
       </div>
       <!-- <div class="messages" id="user"></div> -->
-      <div
-        class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto"
-        id="messages"
-      ></div>
+
+      <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto" id="messages"></div>
+
     </div>
     <div class="flex gap-x-2 w-full px-14">
-      <input
-        class="p-2 rounded-xl"
-        type="text"
-        rows="3"
-        placeholder="Message"
-        name="message"
-        id="message"
-      />
-      <button
-        class="bg-slate-700 text-white rounded-2xl px-3 py-1"
-        type="button"
-        name="send"
-        id="send-btn"
-        onClick="sendMessage()"
-      >
+      <!-- <form> -->
+      <input class="p-2 rounded-xl" type="text" rows="3" placeholder="Message" name="message" id="message" />
+      <button class="bg-slate-700 text-white rounded-2xl px-3 py-1" type="button" name="send" id="send-btn"
+        onClick="sendMessage()">
         Send
       </button>
+      <!-- </form> -->
+      <form method="POST" action="/room">
+        <select id="selecting" onclick="func()">
+          <option disabled selected>Select a Language</option>
+          <option id="WatfordVSManchester Utd" value="hi">Hindi</option>
+          <option id="WatfordVSManchester Utd" value="en">English</option>
+          <option id="WatfordVSManchester Utd" value="te">Telugu</option>
+          <option id="WatfordVSManchester Utd" value="ta">Tamil</option>
+          <option id="WatfordVSManchester Utd" value="tr">Turkish</option>
+          <option id="WatfordVSManchester Utd" value="pa">Panjabi</option>
+          <option id="WatfordVSManchester Utd" value="ur">Urdu</option>
+          <option id="WatfordVSManchester Utd" value="or">Odia</option>
+          <option id="WatfordVSManchester Utd" value="ml">Malayalam</option>
+          <option id="WatfordVSManchester Utd" value="mr">Marathi</option>
+          <option id="WatfordVSManchester Utd" value="ne">Nepali</option>
+          <option id="WatfordVSManchester Utd" value="fr">French</option>
+          <option id="WatfordVSManchester Utd" value="zh-cn">Chinese (Simplified)</option>
+          <option id="WatfordVSManchester Utd" value="zh-tw">Chinese (Traditional)</option>
+          <option id="WatfordVSManchester Utd" value="de">German</option>
+          <option id="WatfordVSManchester Utd" value="it">Italian</option>
+          <option id="WatfordVSManchester Utd" value="ja">Japanese</option>
+          <option id="WatfordVSManchester Utd" value="ko">Korean</option>
+          <option id="WatfordVSManchester Utd" value="la">Latin</option>
+          <option id="WatfordVSManchester Utd" value="pt">Portuguese</option>
+          <option id="WatfordVSManchester Utd" value="ro">Romanian</option>
+          <option id="WatfordVSManchester Utd" value="ru">Russian</option>
+          <option id="WatfordVSManchester Utd" value="es">Spanish</option>
+        </select>
     </div>
   </div>
   <script>
@@ -45,7 +60,25 @@
         }
       });
   </script>
+
   <script type="text/javascript">
+    // const translate = window.translate;
+    async function func() {
+      const val = document.getElementById("selecting").value;
+      fetch('/room', {
+        method: 'POST',
+        body: JSON.stringify({
+          toLang: val,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        }
+      })
+        .then(function (response) {
+          return response.json()
+        })
+        .catch(error => console.error('Error:', error));
+    };
     var socketio = io();
 
     const messages = document.getElementById("messages");
@@ -55,18 +88,45 @@
     function scrollToBottom() {
       container.scrollTop = container.scrollHeight;
     }
-
+    let flang = "en"
+    let ind = 0
     const createMessage = (name, msg) => {
       const ddate = new Date().toLocaleString();
       var content = `
-      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
+      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100" id = m${ind}>
           <span class="ml-2">
               <div class="font-medium text-lg text-gray-800">${name}</div>
-              <div class="bg-gray-700 text-white rounded-tr-2xl rounded-br-2xl rounded-bl-2xl p-2">${msg}</div>
+              <div class="bg-gray-700 text-white rounded-tr-2xl rounded-br-2xl rounded-bl-2xl p-2" id = "initialMessage">${msg}</div>
           </span>
           <span class="muted text-md">
               ${ddate}
           </span>
+          <select id="s${ind}" onclick="myfunc()">
+          <option disabled selected>Select a Language</option>
+          <option id="WatfordVSManchester Utd" value="hi">Hindi</option>
+          <option id="WatfordVSManchester Utd" value="en">English</option>
+          <option id="WatfordVSManchester Utd" value="te">Telugu</option>
+          <option id="WatfordVSManchester Utd" value="ta">Tamil</option>
+          <option id="WatfordVSManchester Utd" value="tr">Turkish</option>
+          <option id="WatfordVSManchester Utd" value="pa">Panjabi</option>
+          <option id="WatfordVSManchester Utd" value="ur">Urdu</option>
+          <option id="WatfordVSManchester Utd" value="or">Odia</option>
+          <option id="WatfordVSManchester Utd" value="ml">Malayalam</option>
+          <option id="WatfordVSManchester Utd" value="mr">Marathi</option>
+          <option id="WatfordVSManchester Utd" value="ne">Nepali</option>
+          <option id="WatfordVSManchester Utd" value="fr">French</option>
+          <option id="WatfordVSManchester Utd" value="zh-cn">Chinese (Simplified)</option>
+          <option id="WatfordVSManchester Utd" value="zh-tw">Chinese (Traditional)</option>
+          <option id="WatfordVSManchester Utd" value="de">German</option>
+          <option id="WatfordVSManchester Utd" value="it">Italian</option>
+          <option id="WatfordVSManchester Utd" value="ja">Japanese</option>
+          <option id="WatfordVSManchester Utd" value="ko">Korean</option>
+          <option id="WatfordVSManchester Utd" value="la">Latin</option>
+          <option id="WatfordVSManchester Utd" value="pt">Portuguese</option>
+          <option id="WatfordVSManchester Utd" value="ro">Romanian</option>
+          <option id="WatfordVSManchester Utd" value="ru">Russian</option>
+          <option id="WatfordVSManchester Utd" value="es">Spanish</option>
+        </select>
       </div>
       `;
       if (msg.search("has entered the room") != -1) {
@@ -96,10 +156,62 @@
       `;
       }
       messages.innerHTML += content;
+      ind = ind + 1;
 
       scrollToBottom();
     };
+    function myfunc() {
 
+      var id = event.target.id;
+      var num = id[1]
+      var idText = "m" + num;
+      var initialText = document.getElementById(idText).innerText;
+      // console.log(initialText)
+      const initialMessageArray = initialText.split("\n");
+      var nameOfPerson = initialMessageArray[0];
+      initialMessageArray.splice(-25)
+      initialText = initialMessageArray[1]
+      // console.log(initialMessageArray);
+      console.log(initialText);
+      // console.log(stringi);
+
+      const endpoint = 'https://google-translate1.p.rapidapi.com/language/translate/v2';
+      const apiKey = '7938f67d5amsh43c04afe96058b2p149a39jsna24ebaae4f66';
+
+      const params = new URLSearchParams();
+      params.set('q', initialText);
+      params.set('target', document.getElementById(id).value);
+      fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'Accept-Encoding': 'application/gzip',
+          'X-RapidAPI-Key': apiKey,
+          'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com'
+        },
+        body: params
+      })
+        .then(response => response.json())
+        .then(data => {
+          // const translatedTextArray = data.data.translations.map(translation => translation.translatedText);
+          // console.log(data);
+          const translatedText = data.data.translations[0].translatedText;
+          // console.log(translatedText);
+          // console.log()
+          const responseString = translatedText
+          const translatedTextArray = translatedText.split(' ');
+          console.log(translatedTextArray);
+          const final = translatedTextArray.join(' ');
+          console.log(final);
+          const ddate = new Date().toLocaleString();
+          const outerDiv = document.getElementById(idText);
+          const innerDiv = outerDiv.querySelector("#initialMessage");
+          innerDiv.innerHTML = final
+
+        })
+        .catch(error => console.error(error));
+
+    }
     socketio.on("message", (data) => {
       createMessage(data.name, data.message);
     });
