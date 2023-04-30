@@ -3,17 +3,19 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <body class="bg-gray-200">
   <div class="flex-wrap w-full">
-    <div class="m-14 mb-4 w-auto bg-white rounded-lg" id="Window">
+    <div class="m-14 mt-[-50px] mb-4 w-auto bg-white rounded-lg" id="Window">
       <div
         class="text-5xl p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2"
       >
-        Chat Room: {{code}}
+        Chat Room : {{code}}
       </div>
       <!-- <div class="messages" id="user"></div> -->
       <div
         class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto"
         id="messages"
-      ></div>
+      >
+        <div class="h-20"></div>
+      </div>
     </div>
     <div class="flex gap-x-2 w-full px-14">
       <input
@@ -24,6 +26,44 @@
         name="message"
         id="message"
       />
+      <form
+        class="flex"
+        id="upload-form"
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <label
+          class="w-28 mx-2 flex flex-col items-center p-1 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-transparent"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path
+              d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z"
+            />
+          </svg>
+          <span class="mt-1 text-xs leading-normal" id="display" >Select a file</span>
+          <input type="file" name="file" id="filename" class="hidden" onchange="displayFileName()"/>
+          <script>
+            function displayFileName() {
+              const fileInput = document.getElementById('filename');
+              const fileName = fileInput.value.split('\\').pop();
+              document.getElementById('display').innerHTML = fileName;
+            } 
+          </script>
+        </label>
+        <input
+          class="hover:cursor-pointer bg-white p-2 rounded-lg hover:bg-transparent"
+          onClick="Uploaded()"
+          type="submit"
+          value="Upload"
+        />
+        <div id="status"></div>
+      </form>
       <button
         class="bg-slate-700 text-white rounded-2xl px-3 py-1"
         type="button"
@@ -44,6 +84,26 @@
           document.getElementById("send-btn").click();
         }
       });
+  </script>
+  <script>
+    var form = document.getElementById("upload-form");
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var xhr = new XMLHttpRequest();
+      const fileInput = document.getElementById("filename");
+      const fileName = fileInput.files[0].name;
+      xhr.open("POST", "/upload");
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          document.getElementById("status").innerText = "Uploaded!";
+          location.reload();
+          alert("Uploaded!")
+        } else {
+          document.getElementById("status").innerText = "Something wrong!";
+        }
+      };
+      xhr.send(new FormData(form));
+    });
   </script>
   <script type="text/javascript">
     var socketio = io();
@@ -88,6 +148,23 @@
       <div class="text w-fit mx-auto rounded-xl my-4 py-4 bg-red-200">
           <span class="ml-2">
               <div class="font-medium text-lg text-gray-800">${name} : ${msg}</div>
+          </span>
+          <span class="muted ml-4 text-md">
+              ${ddates}
+          </span>
+      </div>
+      `;
+      }
+      if (msg.search("http://172.70.102.176:1234/") != -1) {
+        const ddates = new Date().toLocaleString();
+        content = `
+      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
+          <span class="ml-2">
+              <div class="font-medium text-lg text-gray-800">${name}</div>
+              <a class="underline bg-cyan-700 text-white rounded-md p-2" href='${msg}'>${msg.substring(
+          27,
+          msg.length
+        )}</a>
           </span>
           <span class="muted ml-4 text-md">
               ${ddates}

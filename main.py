@@ -1,14 +1,20 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 from flask_socketio import join_room, leave_room, send, SocketIO
+from werkzeug.utils import secure_filename
+from flask_socketio import emit
+import os
 import random
 from string import ascii_uppercase
+import time
 
 app = Flask(__name__)
+app.config["UPLOAD_FOLDER"] = './uploads'
 app.config["SECRET_KEY"] = "hjhjsdahhds"
 socketio = SocketIO(app)
 
 rooms = {}
 
+# flag=(0)
 
 def generate_unique_code(length):
     while True:
@@ -56,11 +62,34 @@ def home():
 @app.route("/room")
 def room():
     room = session.get("room")
-    if room is None or session.get("name") is None or room not in rooms:
+    name = session.get("name")
+    print(room)
+    print(name)
+    print(room not in rooms)
+    if room is None or name is None or room not in rooms:
         return redirect(url_for("home"))
-
     return render_template("room.html", code=room, messages=rooms[room]["messages"])
 
+@app.route('/upload', methods=['POST'])
+def upload():
+    if request.method == 'POST':
+        room = session.get("room")
+        name=session.get("name")
+        file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            # emit('file_uploaded', room=room)
+            url = f"http://172.70.102.176:1234/{filename}"
+            content = {
+                "name":name,
+                "message":url
+            }
+            # print(url)
+            rooms[room]["messages"].append(content)
+            return redirect(url_for('room'))
+    return 'No file selected'
 
 @socketio.on("message")
 def message(data):
@@ -79,6 +108,7 @@ def message(data):
 
 @socketio.on("connect")
 def connect(auth):
+    # flag[0]=1
     room = session.get("room")
     name = session.get("name")
     if not room or not name:
@@ -95,17 +125,18 @@ def connect(auth):
 
 @socketio.on("disconnect")
 def disconnect():
-    room = session.get("room")
-    name = session.get("name")
-    leave_room(room)
+    if socketio.connected:
+        room = session.get("room")
+        name = session.get("name")
+        leave_room(room)
 
-    if room in rooms:
-        rooms[room]["members"] -= 1
-        if rooms[room]["members"] <= 0:
-            del rooms[room]
+        if room in rooms:
+            rooms[room]["members"] -= 1
+            if rooms[room]["members"] <= 0:
+                del rooms[room]
 
-    send({"name": name, "message": "has left the room"}, to=room)
-    print(f"{name} has left the room {room}")
+        send({"name": name, "message": "has left the room"}, to=room)
+        print(f"{name} has left the room {room}")
 
 
 if __name__ == "__main__":
