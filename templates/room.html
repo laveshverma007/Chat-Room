@@ -10,12 +10,36 @@
       </div>
       <!-- <div class="messages" id="user"></div> -->
 
-      <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto" id="messages"></div>
+      <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto" id="messages">
+        <div class="h-20"></div>
+      </div>
+
 
     </div>
     <div class="flex gap-x-2 w-full px-14">
       <!-- <form> -->
       <input class="p-2 rounded-xl" type="text" rows="3" placeholder="Message" name="message" id="message" />
+      <form class="flex" id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+        <label
+          class="w-28 mx-2 flex flex-col items-center p-1 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-transparent">
+          <svg class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path
+              d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
+          </svg>
+          <span class="mt-1 text-xs leading-normal" id="display">Select a file</span>
+          <input type="file" name="file" id="filename" class="hidden" onchange="displayFileName()" />
+          <script>
+            function displayFileName() {
+              const fileInput = document.getElementById('filename');
+              const fileName = fileInput.value.split('\\').pop();
+              document.getElementById('display').innerHTML = fileName;
+            } 
+          </script>
+        </label>
+        <input class="hover:cursor-pointer bg-white p-2 rounded-lg hover:bg-transparent" onClick="Uploaded()"
+          type="submit" value="Upload" />
+        <div id="status"></div>
+      </form>
       <button class="bg-slate-700 text-white rounded-2xl px-3 py-1" type="button" name="send" id="send-btn"
         onClick="sendMessage()">
         Send
@@ -59,6 +83,28 @@
           document.getElementById("send-btn").click();
         }
       });
+  </script>
+
+  <script>
+    var form = document.getElementById("upload-form");
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var xhr = new XMLHttpRequest();
+      const fileInput = document.getElementById("filename");
+      const fileName = fileInput.files[0].name;
+      xhr.open("POST", "/upload");
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          document.getElementById("status").innerText = "Uploaded!";
+          location.reload();
+          alert("Uploaded!")
+          setTimeout(() => { location.reload() }, 2000);
+        } else {
+          document.getElementById("status").innerText = "Something wrong!";
+        }
+      };
+      xhr.send(new FormData(form));
+    });
   </script>
 
   <script type="text/javascript">
@@ -155,9 +201,43 @@
       </div>
       `;
       }
+
+      if (msg.search("http://172.70.96.176:1234/") != -1) {
+        const ddates = new Date().toLocaleString();
+        content = `
+      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
+          <span class="ml-2">
+              <div class="font-medium text-lg text-gray-800">${name}</div>
+              <a class="underline bg-cyan-700 text-white rounded-md p-2" href='${msg}'>${msg.substring(
+          26,
+          msg.length
+        )}</a>
+          </span>
+          <span class="muted ml-4 text-md">
+              ${ddates}
+          </span>
+      </div>
+      `;
+      }
+      if (msg.search("http://172.70.96.176:1234/") != -1) {
+        const ddates = new Date().toLocaleString();
+        content = `
+      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
+          <span class="ml-2">
+              <div class="font-medium text-lg text-gray-800">${name}</div>
+              <a class="underline bg-cyan-700 text-white rounded-md p-2" href='${msg}'>${msg.substring(
+          26,
+          msg.length
+        )}</a>
+          </span>
+          <span class="muted ml-4 text-md">
+              ${ddates}
+          </span>
+      </div>
+      `;
+      }
       messages.innerHTML += content;
       ind = ind + 1;
-
       scrollToBottom();
     };
     function myfunc() {
