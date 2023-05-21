@@ -7,6 +7,7 @@ import random
 from string import ascii_uppercase
 import time
 
+import pyttsx3
 from langdetect import detect
 from translate import Translator
 
@@ -98,8 +99,6 @@ def room():
     return render_template("room.html", code=room, messages=rooms[room]["messages"])
 
 
-print(language["tolang"])
-
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -136,10 +135,10 @@ def message(data):
     # output = translator.translate(t_sentence, dest=language)
     output = translator.translate(data["data"])
 
-    content = {"name": session.get("name"), "message": output}
+    content = {"name": session.get("name"), "message": output , }
     send(content, to=room)
     rooms[room]["messages"].append(content)
-    print(f"{session.get('name')} said: {data['data']}")
+    # print(f"{session.get('name')} said: {data['data']}")
 
 
 @socketio.on("connect")
@@ -155,7 +154,7 @@ def connect(auth):
     join_room(room)
     send({"name": name, "message": "has entered the room"}, to=room)
     rooms[room]["members"] += 1
-    print(f"{name} joined room {room}")
+    # print(f"{name} joined room {room}")
 
 
 @socketio.on("disconnect")
@@ -171,7 +170,7 @@ def disconnect():
                 del rooms[room]
 
         send({"name": name, "message": "has left the room"}, to=room)
-        print(f"{name} has left the room {room}")
+        # print(f"{name} has left the room {room}")
 
 
 if __name__ == "__main__":

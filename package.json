@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "say": "^0.16.0",
     "translate-js": "^1.3.0"
   }
 }
