@@ -6,10 +6,15 @@ import os
 import random
 from string import ascii_uppercase
 import time
-
+import socket
 import pyttsx3
 from langdetect import detect
 from translate import Translator
+import os
+import smtplib
+from email.message import EmailMessage
+
+
 
 
 app = Flask(__name__)
@@ -81,16 +86,44 @@ def home():
 
 
 language = {"tolang": "en", "flang": "en"}
+def get_local_ip_address():
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip_address = s.getsockname()[0]
+        s.close()
+        return ip_address
 
+ip_address = get_local_ip_address()
 
 @app.route("/room", methods=["POST", "GET"])
 def room():
+    recipient_list = ["sprshtndn@gmail.com"]
+    
     room = session.get("room")
     name = session.get("name")
     if request.method == "POST":
         data = request.get_json()
         # print(data.get("toLang"))
         language["tolang"] = data.get("toLang")
+        recipient_list.append(data.get("recipient"))
+    email_id = 'llounge649@gmail.com'
+    email_pass = 'inpmaibuaaozjuig'
+
+    print(recipient_list)
+    print(language["tolang"])
+
+
+    msg = EmailMessage()
+    msg['Subject'] = "Meeting Code"
+    msg['From'] = email_id
+    msg['To'] = recipient_list
+    links = f"http://{get_local_ip_address()}:3000/"
+    msg.set_content(f"Join the room with the code {room} \nHere is the link - {links}")
+
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(email_id, email_pass)
+        smtp.send_message(msg)
     # print(request.form.get("inputlang"))
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
@@ -111,7 +144,7 @@ def upload():
             file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(file_path)
             # emit('file_uploaded', room=room)
-            url = f"http://172.70.96.176:1234/{filename}"
+            url = f"http://{get_local_ip_address()}:1234/{filename}"
             # url = slugify(url)
             # url = urllib.parse.quote_plus(url)
             content = {

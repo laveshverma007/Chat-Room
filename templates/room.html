@@ -5,9 +5,29 @@
 <body class="bg-gray-200">
   <div class="flex-wrap w-full">
     <div class="m-14 mb-4 w-auto bg-white rounded-lg" id="Window">
-      <div class="text-5xl p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2">
+      <div class="text-5xl flex gap-x-4 p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2">
         Chat Room: {{code}}
+        <button class="text-xl text-white border-2 bg-sky-800 rounded-full px-4 py-2" id="invite" onclick="openDialog()">Invite</button>
       </div>
+      <dialog id="myDialog">
+        <h2>Dialog Box</h2>
+        <p>This is a dialog box content.</p>
+        <input type="text" id="popop">
+        <button onclick="func()">Send</button>
+        <button onclick="closeDialog()">Close</button>
+      </dialog>
+      
+      <script>
+        function openDialog() {
+          var dialog = document.getElementById('myDialog');
+          dialog.showModal();
+        }
+      
+        function closeDialog() {
+          var dialog = document.getElementById('myDialog');
+          dialog.close();
+        }
+      </script>
       <!-- <div class="messages" id="user"></div> -->
 
       <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto" id="messages">
@@ -48,8 +68,8 @@
       <form method="POST" action="/room">
         <select id="selecting" onclick="func()">
           <option disabled selected>Select a Language</option>
-          <option id="WatfordVSManchester Utd" value="hi">Hindi</option>
-          <option id="WatfordVSManchester Utd" value="en">English</option>
+          <option id="WatfordVSManchester Utd" value="en" selected>English</option>
+          <option id="WatfordVSManchester Utd" value="hi" >Hindi</option>
           <option id="WatfordVSManchester Utd" value="te">Telugu</option>
           <option id="WatfordVSManchester Utd" value="ta">Tamil</option>
           <option id="WatfordVSManchester Utd" value="tr">Turkish</option>
@@ -110,11 +130,15 @@
   <script type="text/javascript">
     // const translate = window.translate;
     async function func() {
+
       const val = document.getElementById("selecting").value;
+      console.log(val)
+      const emai = document.getElementById("popop").value;
       fetch('/room', {
         method: 'POST',
         body: JSON.stringify({
           toLang: val,
+          recipient: emai
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -209,7 +233,7 @@
       `;
       }
 
-      if (msg.search("http://172.70.96.176:1234/") != -1) {
+      if (msg.search("http://") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
       <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
@@ -226,7 +250,7 @@
       </div>
       `;
       }
-      if (msg.search("http://172.70.96.176:1234/") != -1) {
+      if (msg.search("http://") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
       <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
