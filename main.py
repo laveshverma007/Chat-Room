@@ -109,8 +109,8 @@ def room():
     email_id = 'llounge649@gmail.com'
     email_pass = 'inpmaibuaaozjuig'
 
-    print(recipient_list)
-    print(language["tolang"])
+    # print(recipient_list)
+    # print(language["tolang"])
 
 
     msg = EmailMessage()

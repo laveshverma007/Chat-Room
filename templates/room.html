@@ -2,19 +2,22 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<body class="bg-gray-200">
-  <div class="flex-wrap w-full">
-    <div class="m-14 mb-4 w-auto bg-white rounded-lg" id="Window">
-      <div class="text-5xl flex gap-x-4 p-4 w-auto fixed font-semibold bg-white float-left m-4 mt-0 border-b-2">
+<body class="bg-indigo-400">
+  <div class="flex-wrap mb-10 w-full">
+    <div class="m-14 mb-4 w-auto bg-gray-100 rounded-lg" id="Window">
+      <div class="flex float-left gap-x-4 p-4 m-4 mt-0 w-auto text-5xl font-semibold bg-gray-100 border-b-2">
         Chat Room: {{code}}
-        <button class="text-xl text-white border-2 bg-sky-800 rounded-full px-4 py-2" id="invite" onclick="openDialog()">Invite</button>
       </div>
-      <dialog id="myDialog">
-        <h2>Dialog Box</h2>
-        <p>This is a dialog box content.</p>
-        <input type="text" id="popop">
-        <button onclick="func()">Send</button>
-        <button onclick="closeDialog()">Close</button>
+      <div>
+        <button class="float-right px-6 py-2 m-4 text-2xl text-white bg-sky-600 rounded-xl border-2" id="invite" onclick="openDialog()">Invite</button>
+      </div>
+      
+      <dialog id="myDialog" class="p-8 text-white w-[450px] h-64 rounded-lg bg-slate-700 font-sans text-2xl">
+        <h2 class="underline">Dialog Box</h2>
+        <p class="my-1">Write a valid email to invite in this room.</p>
+        <input type="text" id="popop" placeholder="name@example.com" class="p-2.5 my-1 w-full text-lg text-gray-900 rounded-lg">
+        <button onclick="closeDialog()" class="p-2 my-1 mr-2 rounded-xl border">Close</button>
+        <butto class="p-2 my-1 rounded-xl border" onclick="func()">Send</button>
       </dialog>
       
       <script>
@@ -30,18 +33,18 @@
       </script>
       <!-- <div class="messages" id="user"></div> -->
 
-      <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto" id="messages">
-        <div class="h-20"></div>
+      <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto text-xl" id="messages">
+        <div class="h-2"></div>
       </div>
 
 
     </div>
-    <div class="flex gap-x-2 w-full px-14">
+    <div class="flex gap-x-2 px-14 w-full">
       <!-- <form> -->
       <input class="p-2 rounded-xl" type="text" rows="3" placeholder="Message" name="message" id="message" />
       <form class="flex" id="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
         <label
-          class="w-28 mx-2 flex flex-col items-center p-1 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:bg-transparent">
+          class="flex flex-col items-center p-1 mx-2 w-28 tracking-wide uppercase bg-white rounded-lg border shadow-lg cursor-pointer text-blue border-blue hover:bg-transparent">
           <svg class="w-6 h-6" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path
               d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z" />
@@ -56,11 +59,11 @@
             } 
           </script>
         </label>
-        <input class="hover:cursor-pointer bg-white p-2 rounded-lg hover:bg-transparent" onClick="Uploaded()"
+        <input class="p-2 bg-white rounded-lg hover:cursor-pointer hover:bg-transparent" onClick="Uploaded()"
           type="submit" value="Upload" />
         <div id="status"></div>
       </form>
-      <button class="bg-slate-700 text-white rounded-2xl px-3 py-1" type="button" name="send" id="send-btn"
+      <button class="px-3 py-1 text-white rounded-2xl bg-slate-700" type="button" name="send" id="send-btn"
         onClick="sendMessage()">
         Send
       </button>
@@ -163,10 +166,10 @@
     const createMessage = (name, msg) => {
       const ddate = new Date().toLocaleString();
       var content = `
-      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100" id = m${ind}>
+      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-100 rounded-xl text" id = m${ind}>
           <span class="ml-2">
-              <div class="font-medium text-lg text-gray-800">${name}</div>
-              <div class="bg-gray-700 text-white rounded-tr-2xl rounded-br-2xl rounded-bl-2xl p-2" id = "initialMessage">${msg}</div>
+              <div class="text-lg font-medium text-gray-800">${name}</div>
+              <div class="p-2 text-white bg-gray-700 rounded-tr-2xl rounded-br-2xl rounded-bl-2xl" id = "initialMessage">${msg}</div>
           </span>
           <span class="muted text-md">
               ${ddate}
@@ -209,11 +212,11 @@
       if (msg.search("has entered the room") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
-      <div class="text w-fit mx-auto rounded-xl my-4 py-4 bg-green-200">
+      <div class="py-4 mx-auto my-4 bg-green-200 rounded-xl text w-fit">
           <span class="ml-2">
-              <div class="font-medium text-lg text-gray-800">${name} : ${msg}</div>
+              <div class="text-lg font-medium text-gray-800">${name} : ${msg}</div>
           </span>
-          <span class="muted ml-4 text-md">
+          <span class="ml-4 muted text-md">
               ${ddates}
           </span>
       </div>
@@ -222,11 +225,11 @@
       if (msg.search("has left the room") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
-      <div class="text w-fit mx-auto rounded-xl my-4 py-4 bg-red-200">
+      <div class="py-4 mx-auto my-4 bg-red-200 rounded-xl text w-fit">
           <span class="ml-2">
-              <div class="font-medium text-lg text-gray-800">${name} : ${msg}</div>
+              <div class="text-lg font-medium text-gray-800">${name} : ${msg}</div>
           </span>
-          <span class="muted ml-4 text-md">
+          <span class="ml-4 muted text-md">
               ${ddates}
           </span>
       </div>
@@ -236,15 +239,15 @@
       if (msg.search("http://") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
-      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
+      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-100 rounded-xl text">
           <span class="ml-2">
-              <div class="font-medium text-lg text-gray-800">${name}</div>
-              <a class="underline bg-cyan-700 text-white rounded-md p-2" href='${msg}'>${msg.substring(
+              <div class="text-lg font-medium text-gray-800">${name}</div>
+              <a class="p-2 text-white underline bg-cyan-700 rounded-md" href='${msg}'>${msg.substring(
           26,
           msg.length
         )}</a>
           </span>
-          <span class="muted ml-4 text-md">
+          <span class="ml-4 muted text-md">
               ${ddates}
           </span>
       </div>
@@ -253,15 +256,15 @@
       if (msg.search("http://") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
-      <div class="text ml-7 mt-4 rounded-xl my-4 mr-4 py-4 bg-gray-100">
+      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-100 rounded-xl text">
           <span class="ml-2">
-              <div class="font-medium text-lg text-gray-800">${name}</div>
-              <a class="underline bg-cyan-700 text-white rounded-md p-2" href='${msg}'>${msg.substring(
+              <div class="text-lg font-medium text-gray-800">${name}</div>
+              <a class="p-2 text-white underline bg-cyan-700 rounded-md" href='${msg}'>${msg.substring(
           26,
           msg.length
         )}</a>
           </span>
-          <span class="muted ml-4 text-md">
+          <span class="ml-4 muted text-md">
               ${ddates}
           </span>
       </div>
