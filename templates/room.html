@@ -12,10 +12,10 @@
         <button class="float-right px-6 py-2 m-4 text-2xl text-white bg-sky-600 rounded-xl border-2" id="invite" onclick="openDialog()">Invite</button>
       </div>
       
-      <dialog id="myDialog" class="p-8 text-white w-[450px] h-64 rounded-lg bg-slate-700 font-sans text-2xl">
+      <dialog id="myDialog" class="p-4 px-8 text-white w-[450px] h-72 rounded-lg bg-slate-700 font-sans text-2xl">
         <h2 class="underline">Dialog Box</h2>
         <p class="my-1">Write a valid email to invite in this room.</p>
-        <input type="text" id="popop" placeholder="name@example.com" class="p-2.5 my-1 w-full text-lg text-gray-900 rounded-lg">
+        <input type="text" id="popop" placeholder="name@example.com" class="p-2.5 my-4 w-full text-lg text-gray-900 rounded-lg">
         <button onclick="closeDialog()" class="p-2 my-1 mr-2 rounded-xl border">Close</button>
         <butto class="p-2 my-1 rounded-xl border" onclick="func()">Send</button>
       </dialog>
@@ -33,7 +33,7 @@
       </script>
       <!-- <div class="messages" id="user"></div> -->
 
-      <div class="messages mt-24 xl:h-[750px] h-[1400px] overflow-y-auto text-xl" id="messages">
+      <div class="messages mt-24 bg-gray-200 xl:h-[750px] h-[1400px] overflow-y-auto text-xl" id="messages">
         <div class="h-2"></div>
       </div>
 
@@ -239,7 +239,7 @@
       if (msg.search("http://") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
-      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-100 rounded-xl text">
+      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-300 rounded-xl text">
           <span class="ml-2">
               <div class="text-lg font-medium text-gray-800">${name}</div>
               <a class="p-2 text-white underline bg-cyan-700 rounded-md" href='${msg}'>${msg.substring(
@@ -256,7 +256,7 @@
       if (msg.search("http://") != -1) {
         const ddates = new Date().toLocaleString();
         content = `
-      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-100 rounded-xl text">
+      <div class="py-4 my-4 mt-4 mr-4 ml-7 bg-gray-300 rounded-xl text">
           <span class="ml-2">
               <div class="text-lg font-medium text-gray-800">${name}</div>
               <a class="p-2 text-white underline bg-cyan-700 rounded-md" href='${msg}'>${msg.substring(
@@ -309,11 +309,11 @@
       initialMessageArray.splice(-25)
       initialText = initialMessageArray[1]
       // console.log(initialMessageArray);
-      console.log(initialText);
+      // console.log(initialText);
       // console.log(stringi);
 
       const endpoint = 'https://google-translate1.p.rapidapi.com/language/translate/v2';
-      const apiKey = '129761d597mshe6533d4ddb62481p1424e9jsna1507449765d';
+      const apiKey = 'f1c1a834d6mshea2498a4f697e5dp1d2c3ejsnf6882c67a5ad';
 
       const params = new URLSearchParams();
       params.set('q', initialText);
@@ -331,15 +331,15 @@
         .then(response => response.json())
         .then(data => {
           // const translatedTextArray = data.data.translations.map(translation => translation.translatedText);
-          // console.log(data);
+          console.log(data);
           const translatedText = data.data.translations[0].translatedText;
-          // console.log(translatedText);
+          console.log(translatedText);
           // console.log()
           const responseString = translatedText
           const translatedTextArray = translatedText.split(' ');
-          console.log(translatedTextArray);
+          // console.log(translatedTextArray);
           const final = translatedTextArray.join(' ');
-          console.log(final);
+          // console.log(final);
           const ddate = new Date().toLocaleString();
           const outerDiv = document.getElementById(idText);
           const innerDiv = outerDiv.querySelector("#initialMessage");
