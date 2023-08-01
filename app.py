@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import subprocess
 
 cmd1 = "python3 main.py"
